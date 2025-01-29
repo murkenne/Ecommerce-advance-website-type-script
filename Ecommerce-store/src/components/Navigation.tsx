@@ -31,7 +31,7 @@ export default function Navigation() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container">
-        <Link to="/" className="navbar-brand">Store</Link>
+        <Link to="/" className="navbar-brand">E-commerce Store</Link>
         <select 
           className="form-select mx-3" 
           style={{width: '200px'}}
