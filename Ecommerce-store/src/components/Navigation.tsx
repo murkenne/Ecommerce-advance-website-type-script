@@ -1,15 +1,15 @@
-
 import { useQuery } from '@tanstack/react-query';
-
-// Suppress sandbox attribute warning
-console.warn = () => {};
 import { useNavigate, Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
+import { getAuth, signOut } from 'firebase/auth';
+import { setUser } from '../store/authSlice'; // Ensure this action is correctly imported
 
 export default function Navigation() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { items } = useSelector((state: RootState) => state.cart);
+  const auth = getAuth(); // Get Firebase Auth instance
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
@@ -25,6 +25,16 @@ export default function Navigation() {
       navigate('/');
     } else {
       navigate(`/category/${category}`);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth); // Sign out the user
+      dispatch(setUser(null)); // Dispatch user logout action
+      navigate('/login'); // Redirect to login page after logout
+    } catch (error) {
+      console.error('Logout failed:', error);
     }
   };
 
@@ -44,9 +54,33 @@ export default function Navigation() {
             </option>
           ))}
         </select>
-        <Link to="/cart" className="btn btn-outline-primary">
-          Cart ({items.length})
-        </Link>
+        <div className="d-flex">
+          <Link to="/cart" className="btn btn-outline-primary me-2">
+            Cart ({items.length})
+          </Link>
+          {auth.currentUser ? (
+            <>
+              <Link to="/profile" className="btn btn-outline-secondary me-2">
+                Profile
+              </Link>
+              <button 
+                onClick={handleLogout} 
+                className="btn btn-outline-secondary"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn btn-outline-secondary me-2">
+                Login
+              </Link>
+              <Link to="/register" className="btn btn-outline-secondary">
+                Register
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );
