@@ -3,16 +3,28 @@ import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, updateQuantity, clearCart } from '../store/cartSlice';
 import { RootState } from '../store';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { orderService } from '../services/orderService';
 
 export default function Cart() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { items, total } = useSelector((state: RootState) => state.cart);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
-  const handleCheckout = () => {
-    dispatch(clearCart());
-    setCheckoutSuccess(true);
-    setTimeout(() => setCheckoutSuccess(false), 3000);
+  const handleCheckout = async () => {
+    if (!user) return;
+    
+    try {
+      await orderService.createOrder(user.uid, items, total);
+      dispatch(clearCart());
+      setCheckoutSuccess(true);
+      setTimeout(() => setCheckoutSuccess(false), 3000);
+      navigate('/orders');
+    } catch (error) {
+      console.error('Failed to create order:', error);
+    }
   };
 
   if (checkoutSuccess) {
@@ -35,10 +47,14 @@ export default function Cart() {
           <div className="row g-0">
             <div className="col-md-2">
               <img 
-                src={item.image} 
+                src={item.image || 'https://placehold.co/200x200/lightgray/white?text=No+Image'} 
                 className="img-fluid rounded-start p-2" 
                 alt={item.title}
                 style={{ height: '150px', objectFit: 'contain' }}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://placehold.co/200x200';
+                }}
               />
             </div>
             <div className="col-md-8">
@@ -78,10 +94,12 @@ export default function Cart() {
         <button 
           className="btn btn-success"
           onClick={handleCheckout}
+          disabled={!items.length || !user}
         >
-          Checkout ({items.length} items)
+          {user ? `Checkout (${items.length} items)` : 'Login to Checkout'}
         </button>
       </div>
     </div>
   );
-}
+
+  }

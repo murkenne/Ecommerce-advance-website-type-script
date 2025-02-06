@@ -3,9 +3,10 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
+import OrderHistory from './components/OrderHistory';
 import Register from './components/Register';
+import Login from './components/Login';
 import Profile from './components/Profile';
-import Login from './components/Login'; 
 import { Routes, Route } from 'react-router-dom'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -23,7 +24,8 @@ export default function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile/>} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/orders" element={<OrderHistory />} />
           </Routes>
         </main>
       </QueryClientProvider>

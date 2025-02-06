@@ -29,7 +29,7 @@ const cartSlice = createSlice({
       state.total = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
       sessionStorage.setItem('cart', JSON.stringify(state));
     },
-    removeFromCart: (state, action: PayloadAction<number>) => {
+    removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter(item => item.id !== action.payload);
       state.total = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
       sessionStorage.setItem('cart', JSON.stringify(state));
