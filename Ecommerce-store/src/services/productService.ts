@@ -4,14 +4,38 @@ import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc } from 'firebase
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { FirestoreProduct, Product } from '../types';
 
+const FAKE_STORE_API = 'https://fakestoreapi.com/products';
+
 export const productService = {
   async getAllProducts(): Promise<Product[]> {
-    const productsRef = collection(db, 'products');
-    const snapshot = await getDocs(productsRef);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    } as Product));
+    try {
+      // Get Firebase products
+      const productsRef = collection(db, 'products');
+      const snapshot = await getDocs(productsRef);
+      const firebaseProducts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Product));
+
+      // Get Fake Store products
+      const response = await fetch(FAKE_STORE_API);
+      const fakeStoreProducts = await response.json();
+      const mappedFakeStoreProducts = fakeStoreProducts.map((product: any) => ({
+        id: `fake_${product.id}`,
+        title: product.title,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+        image: product.image,
+        rating: product.rating
+      }));
+
+      // Combine both sources
+      return [...firebaseProducts, ...mappedFakeStoreProducts];
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      return [];
+    }
   },
 
   async uploadImage(file: File): Promise<string> {
@@ -32,15 +56,21 @@ export const productService = {
   },
 
   async updateProduct(id: string, updates: Partial<FirestoreProduct>): Promise<void> {
-    const productRef = doc(db, 'products', id);
-    await updateDoc(productRef, {
-      ...updates,
-      updatedAt: new Date().toISOString()
-    });
+    // Only allow updating Firebase products
+    if (!id.startsWith('fake_')) {
+      const productRef = doc(db, 'products', id);
+      await updateDoc(productRef, {
+        ...updates,
+        updatedAt: new Date().toISOString()
+      });
+    }
   },
 
   async deleteProduct(id: string): Promise<void> {
-    const productRef = doc(db, 'products', id);
-    await deleteDoc(productRef);
+    // Only allow deleting Firebase products
+    if (!id.startsWith('fake_')) {
+      const productRef = doc(db, 'products', id);
+      await deleteDoc(productRef);
+    }
   }
 };

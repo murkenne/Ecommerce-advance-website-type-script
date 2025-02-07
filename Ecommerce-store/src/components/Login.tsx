@@ -18,7 +18,10 @@ export default function Login() {
     
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      dispatch(setUser(result.user));
+      dispatch(setUser({
+        uid: result.user.uid,
+        email: result.user.email
+      }));
       navigate('/');
     } catch (error: any) {
       dispatch(setError(error.message));

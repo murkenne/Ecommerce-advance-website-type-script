@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -31,7 +30,7 @@ export default function ProductList() {
   const createMutation = useMutation({
     mutationFn: productService.createProduct,
     onSuccess: () => {
-      queryClient.invalidateQueries(['products']);
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setNewProduct({
         title: '',
         price: 0,
@@ -48,21 +47,22 @@ export default function ProductList() {
     mutationFn: ({ id, updates }: { id: string, updates: Partial<FirestoreProduct> }) =>
       productService.updateProduct(id, updates),
     onSuccess: () => {
-      queryClient.invalidateQueries(['products']);
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setEditingProduct(null);
     }
   });
 
   const deleteMutation = useMutation({
     mutationFn: productService.deleteProduct,
-    onSuccess: () => queryClient.invalidateQueries(['products'])
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] })
   });
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       try {
         const imageUrl = await productService.uploadImage(e.target.files[0]);
-        setNewProduct({ ...newProduct, image: imageUrl });
+        console.log('Uploaded image URL:', imageUrl); // Add this to debug
+        setNewProduct(prev => ({ ...prev, image: imageUrl }));
       } catch (error) {
         console.error('Failed to upload image:', error);
       }
@@ -93,7 +93,7 @@ export default function ProductList() {
   return (
     <>
       <Navigation />
-      
+
       {/* Create Product Form */}
       <form onSubmit={handleCreateProduct} className="mb-4">
         <h3>Add New Product</h3>
@@ -198,18 +198,22 @@ export default function ProductList() {
                         >
                           Add to Cart
                         </button>
-                        <button 
-                          className="btn btn-warning"
-                          onClick={() => setEditingProduct(product)}
-                        >
-                          Edit
-                        </button>
-                        <button 
-                          className="btn btn-danger"
-                          onClick={() => deleteMutation.mutate(product.id)}
-                        >
-                          Delete
-                        </button>
+                        {!product.id.startsWith('fake_') && (
+                          <>
+                            <button 
+                              className="btn btn-warning"
+                              onClick={() => setEditingProduct(product)}
+                            >
+                              Edit
+                            </button>
+                            <button 
+                              className="btn btn-danger"
+                              onClick={() => deleteMutation.mutate(product.id)}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   </>
