@@ -34,17 +34,18 @@ const cartSlice = createSlice({
       state.total = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
       sessionStorage.setItem('cart', JSON.stringify(state));
     },
-    updateQuantity: (state, action: PayloadAction<{ id: number; quantity: number }>) => {
-      const item = state.items.find(item => item.id === action.payload.id);
-      if (item) {
-        item.quantity = Math.max(0, action.payload.quantity);
-        if (item.quantity === 0) {
-          state.items = state.items.filter(i => i.id !== action.payload.id);
-        }
-      }
-      state.total = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      sessionStorage.setItem('cart', JSON.stringify(state));
-    },
+    updateQuantity: (state, action: PayloadAction<{ id: string; quantity: number }>) => {
+  const item = state.items.find(item => item.id === action.payload.id);
+  if (item) {
+    item.quantity = Math.max(0, action.payload.quantity);
+    if (item.quantity === 0) {
+      state.items = state.items.filter(i => i.id !== action.payload.id);
+    }
+  }
+  state.total = state.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  sessionStorage.setItem('cart', JSON.stringify(state));
+},
+
     clearCart: (state) => {
       state.items = [];
       state.total = 0;

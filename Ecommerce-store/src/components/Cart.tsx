@@ -1,4 +1,3 @@
-
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, updateQuantity, clearCart } from '../store/cartSlice';
 import { RootState } from '../store';
@@ -13,9 +12,14 @@ export default function Cart() {
   const user = useSelector((state: RootState) => state.auth.user);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
+  // ✅ Fixed: Ensure 'id' remains a string and is properly used
+  const handleQuantityChange = (id: string, quantity: number) => {
+    dispatch(updateQuantity({ id, quantity })); // ✅ No 'Number(id)' conversion
+  };
+
   const handleCheckout = async () => {
     if (!user) return;
-    
+
     try {
       await orderService.createOrder(user.uid, items, total);
       dispatch(clearCart());
@@ -66,14 +70,14 @@ export default function Cart() {
                 <div className="d-flex align-items-center gap-2">
                   <button 
                     className="btn btn-outline-secondary btn-sm"
-                    onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity - 1 }))}
+                    onClick={() => handleQuantityChange(item.id, item.quantity - 1)} // ✅ Used handleQuantityChange
                   >
                     -
                   </button>
                   <span>{item.quantity}</span>
                   <button 
                     className="btn btn-outline-secondary btn-sm"
-                    onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                    onClick={() => handleQuantityChange(item.id, item.quantity + 1)} // ✅ Used handleQuantityChange
                   >
                     +
                   </button>
@@ -101,5 +105,4 @@ export default function Cart() {
       </div>
     </div>
   );
-
-  }
+}

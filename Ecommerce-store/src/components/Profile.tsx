@@ -2,12 +2,12 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { userService, UserProfile } from '../services/userService';
+import { userService} from '../services/userService';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const user = useSelector((state: RootState) => state.auth.user);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const navigate = useNavigate();
@@ -21,7 +21,6 @@ export default function Profile() {
   const loadProfile = async () => {
     if (user?.uid) {
       const userProfile = await userService.getUserProfile(user.uid);
-      setProfile(userProfile);
       setName(userProfile?.name || '');
       setAddress(userProfile?.address || '');
     }
