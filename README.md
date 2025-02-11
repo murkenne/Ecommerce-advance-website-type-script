@@ -1,29 +1,58 @@
-# E-Commerce Website - User Guide
+# E-commerce Store with React & Firebase
+# A modern e-commerce web application built with React, TypeScript, and Firebase, featuring user authentication, product management, and shopping cart functionality.
 
-# Overview
+## 1. Getting Started
+Click the "Run" button in Replit to start the development server. The application will be available at the URL provided by Replit.
 
- # This e-commerce app lets users browse products, filter by category, add items to the cart, and simulate checkout.
+## 2. Features
+User authentication (login/register)
+Product listing and management
+Shopping cart functionality
+Order history
+User profile management
+Category-based product filtering
+Image upload for products
+## 3. Technologies Used
+React 18
+TypeScript
+Firebase (Authentication, Firestore, Storage)
+Redux Toolkit
+React Query
+React Router DOM
+Bootstrap 5
+## 4. Project Structure
+src/
+  ├── components/     # React components
+  ├── services/      # API and Firebase services
+  ├── store/         # Redux store and slices
+  ├── types/         # TypeScript interfaces
+  └── firebaseConfig.ts
+## 5. Firebase Setup
+Create a Firebase project
+Enable Authentication, Firestore, and Storage
+Update firebaseConfig.ts with your Firebase credentials
+## 6. Available Scripts
+npm run dev: Start development server
+npm run build: Build for production
+npm run preview: Preview production build
+## 7. Authentication
+The application supports:
 
-# Features
+Email/Password registration
+User login/logout
+Profile management
+## 8. Product Management
+Administrators can:
 
-View product details
+Add new products
+Edit existing products
+Delete products
+Upload product images
+## 9. Shopping Features
+Users can:
 
+Browse products
 Filter by category
-
-Add/remove items from the cart
-
-View total price
-
-Simulated checkout
-
-# How to Use
-
-Browse products on the home page.
-
-Use the dropdown to filter by category.
-
-Click 'Add to Cart' to add items.
-
-View and manage your cart.
-
-Click 'Checkout' to clear the cart.
+Add items to cart
+View order history
+## 10. Contributing
