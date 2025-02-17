@@ -1,5 +1,11 @@
 # React + TypeScript + Vite
 
+# Links to website: ecommerce-advance-website-type-script.vercel.app
+
+# ecommerce-advance-websit-git-7831b3-kenneth-s-projects-3a427755.vercel.app
+# ecommerce-advance-website-type-script-3dwxtqjez.vercel.app
+
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
